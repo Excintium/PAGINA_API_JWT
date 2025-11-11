@@ -15,14 +15,11 @@ export function ProductForm({ open, loading, product, onSubmit, onCancel }: Prod
 
     const title = product ? 'Editar Producto' : 'Añadir Nuevo Producto';
 
-    // Rellena el formulario cuando 'product' cambia (al editar) o limpia (al crear)
     useEffect(() => {
         if (open) {
             if (product) {
-                // Modo Edición: rellena los campos
                 form.setFieldsValue(product);
             } else {
-                // Modo Creación: limpia los campos
                 form.resetFields();
             }
         }
@@ -33,7 +30,6 @@ export function ProductForm({ open, loading, product, onSubmit, onCancel }: Prod
             .validateFields()
             .then((values) => {
                 onSubmit(values as any);
-                // El formulario se reseteará con el useEffect la próxima vez que se abra
             })
             .catch((info) => {
                 console.log('Validate Failed:', info);
@@ -50,12 +46,7 @@ export function ProductForm({ open, loading, product, onSubmit, onCancel }: Prod
             onCancel={onCancel}
             onOk={handleOk}
             confirmLoading={loading}
-
-            // --- CAMBIO AQUÍ ---
-            // Reemplazamos 'destroyOnClose' por 'forceRender'
-            // destroyOnClose
-            forceRender // Esto mantiene el Form montado para que podamos controlarlo con 'form.setFieldsValue'
-            // --- FIN DEL CAMBIO ---
+            forceRender
         >
             <Form form={form} layout="vertical" name="product_form">
                 <Form.Item

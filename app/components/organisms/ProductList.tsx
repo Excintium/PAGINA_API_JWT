@@ -1,4 +1,3 @@
-// Importamos Space y Tag
 import { List, Button, Typography, Card, Space, Tag } from 'antd';
 import type { Product } from '~/Types';
 
@@ -34,14 +33,14 @@ export function ProductList({ products, onAdd, onEdit, onDelete }: ProductListPr
                         ]}
                     >
                         <List.Item.Meta
-                            title={<Typography.Text>{item.name}</Typography.Text>}
-                            // --- MODIFICACIÓN AQUÍ ---
+                            // --- CORRECCIÓN AQUÍ ---
+                            title={<Typography.Text>{item.nombre}</Typography.Text>}
                             description={
                                 <>
                                     <div>{item.description}</div>
                                     <Space style={{ marginTop: 8 }}>
                                         <Tag color="cyan">
-                                            Precio: ${item.price.toLocaleString('es-CL')}
+                                            Precio: ${item.precio.toLocaleString('es-CL')}
                                         </Tag>
                                         <Tag color="geekblue">
                                             Stock: {item.stock}
@@ -49,7 +48,7 @@ export function ProductList({ products, onAdd, onEdit, onDelete }: ProductListPr
                                     </Space>
                                 </>
                             }
-                            // --- FIN DE LA MODIFICACIÓN ---
+                            // --- FIN DE LA CORRECCIÓN ---
                         />
                     </List.Item>
                 )}

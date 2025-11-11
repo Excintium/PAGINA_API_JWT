@@ -12,6 +12,10 @@ import { ConfigProvider } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
 // --- FIN IMPORTACIONES ANTD ---
 
+// --- IMPORTACIÓN DEL AUTH ---
+import { AuthProvider } from '~/contexts/AuthContext';
+// --- FIN IMPORTACIÓN AUTH ---
+
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -48,12 +52,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 // --- MODIFICACIÓN AQUÍ ---
-// Envuelve el Outlet con los proveedores de Antd
+// Envuelve el Outlet con todos los proveedores
 export default function App() {
     return (
         <ConfigProvider>
             <StyleProvider hashPriority="high">
-                <Outlet />
+                <AuthProvider>
+                    <Outlet />
+                </AuthProvider>
             </StyleProvider>
         </ConfigProvider>
     );

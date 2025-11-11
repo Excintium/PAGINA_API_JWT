@@ -2,18 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { message, Modal, Spin } from 'antd';
 
-// --- IMPORTACIONES CORREGIDAS (usando alias '~' y PascalCase) ---
-// Usamos el alias '~/' que definiste en tsconfig.json
-// y respetamos tu convención PascalCase para los nombres de archivo.
-
+// Importaciones con las rutas corregidas (PascalCase)
 import { ProductList } from '~/components/organisms/ProductList';
 import { MainLayout } from '~/components/templates/MainLayout';
 import { ProductForm } from '~/components/organisms/ProductForm';
-import type { Product } from '~/Types'; // <-- Corregido a PascalCase
+import type { Product } from '~/Types';
 import { useAuth } from '~/contexts/AuthContext';
-import apiClient from '~/api/Client'; // <-- Corregido a PascalCase
-
-// --- FIN IMPORTACIONES ---
+import apiClient from '~/api/Client';
 
 export function meta() {
     return [
@@ -24,7 +19,7 @@ export function meta() {
 
 export default function ProductsPage() {
     // 1. HOOKS
-    const { token } = useAuth(); // Quitamos 'logout' que no se usa aquí
+    const { token } = useAuth();
     const navigate = useNavigate();
 
     // 2. ESTADOS
@@ -35,12 +30,10 @@ export default function ProductsPage() {
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
     // --- 3. DEFINICIÓN DE FUNCIONES ---
-    // (Definimos las funciones aquí, ANTES de los useEffect)
 
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
-            // Usamos el endpoint '/productos' de tu API
             const response = await apiClient.get('/productos');
             setProducts(response.data);
         } catch (error: any) {
@@ -61,7 +54,7 @@ export default function ProductsPage() {
                 try {
                     await apiClient.delete(`/productos/${id}`);
                     message.success('Producto eliminado');
-                    fetchProducts(); // Recarga la lista
+                    fetchProducts();
                 } catch (error: any) {
                     message.error('Error al eliminar: ' + error.message);
                 }
@@ -96,7 +89,7 @@ export default function ProductsPage() {
             }
             setIsModalOpen(false);
             setEditingProduct(null);
-            fetchProducts(); // Recarga la lista
+            fetchProducts();
         } catch (error: any) {
             message.error('Error al guardar el producto: ' + error.message);
         } finally {
@@ -105,9 +98,7 @@ export default function ProductsPage() {
     };
 
     // --- 4. EFECTOS (useEffect) ---
-    // (Ahora los 'useEffect' pueden encontrar las funciones de arriba)
 
-    // Protección de la ruta
     useEffect(() => {
         if (!token) {
             message.warning('Debes iniciar sesión para ver esta página');
@@ -115,10 +106,9 @@ export default function ProductsPage() {
         }
     }, [token, navigate]);
 
-    // Carga inicial de datos
     useEffect(() => {
         if (token) {
-            fetchProducts(); // <-- El error desaparece
+            fetchProducts();
         }
     }, [token]);
 
@@ -126,7 +116,7 @@ export default function ProductsPage() {
     // --- 5. RENDERIZADO ---
 
     if (!token) {
-        return null; // No renderiza nada, el useEffect ya está redirigiendo
+        return null;
     }
 
     if (isLoading) {
@@ -139,7 +129,6 @@ export default function ProductsPage() {
         );
     }
 
-    // Todos los imports (ProductList, MainLayout, ProductForm, Modal, Spin) se usan aquí
     return (
         <MainLayout>
             <ProductList

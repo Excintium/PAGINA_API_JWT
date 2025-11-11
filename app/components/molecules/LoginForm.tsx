@@ -1,17 +1,20 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined } from '@ant-design/icons'; // <-- Cambiado
 import { Button, Checkbox, Form, Input, Card, Typography } from 'antd';
-import { useNavigate } from 'react-router';
+import { useAuth } from '~/contexts/AuthContext'; // <-- Importa el hook de Auth
 
 const { Title } = Typography;
 
 export function LoginForm() {
-    const navigate = useNavigate();
+    const { login, isLoading } = useAuth(); // <-- Usa el hook
 
-    const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
-        // Aquí iría tu lógica de autenticación JWT
-        // Por ahora, solo navegamos a la página de productos
-        navigate('/products');
+    const onFinish = async (values: any) => {
+        try {
+            // Llama a la función 'login' de AuthContext
+            await login(values);
+        } catch (error) {
+            // El contexto ya mostró el mensaje de error
+            console.log('Error capturado por el formulario');
+        }
     };
 
     return (
@@ -24,11 +27,18 @@ export function LoginForm() {
                 initialValues={{ remember: true }}
                 onFinish={onFinish}
             >
+                {/* Cambiado a 'email' */}
                 <Form.Item
-                    name="username"
-                    rules={[{ required: true, message: '¡Por favor ingresa tu usuario!' }]}
+                    name="email"
+                    rules={[
+                        { required: true, message: '¡Por favor ingresa tu email!' },
+                        { type: 'email', message: '¡Email no válido!' }
+                    ]}
                 >
-                    <Input prefix={<UserOutlined />} placeholder="Usuario" />
+                    <Input
+                        prefix={<MailOutlined />} // Icono cambiado
+                        placeholder="Email"
+                    />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -47,8 +57,14 @@ export function LoginForm() {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-                        Ingresar
+                    {/* Botón con estado de carga */}
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        style={{ width: '100%' }}
+                        loading={isLoading}
+                    >
+                        {isLoading ? 'Ingresando...' : 'Ingresar'}
                     </Button>
                 </Form.Item>
             </Form>

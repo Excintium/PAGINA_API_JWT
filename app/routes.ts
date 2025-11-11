@@ -5,5 +5,5 @@ export default [
     index("routes/home.tsx"),
 
     // Esta es la nueva ruta que creamos para "/products"
-    route("products", "routes/products.tsx"),
+    route("products", "routes/Products.tsx"), // Asegúrate que el nombre del archivo coincida (Products.tsx)
 ] satisfies RouteConfig;
