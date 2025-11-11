@@ -3,8 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { message } from 'antd';
 
-// Usamos la URL base de la API sin el prefijo,
-// ya que el 'apiClient' (que usa prefijo) es solo para peticiones autenticadas.
 const AUTH_URL = 'http://localhost:3000';
 
 interface AuthContextType {
@@ -12,6 +10,7 @@ interface AuthContextType {
     login: (values: any) => Promise<void>;
     logout: () => void;
     isLoading: boolean;
+    register: (values: any) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,20 +30,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const login = async (values: any) => {
         setIsLoading(true);
         try {
-            // Usamos el DTO de tu API (email, password)
             const response = await axios.post(`${AUTH_URL}/api/v1/auth/login`, {
                 email: values.email,
                 password: values.password
             });
-
             const { access_token } = response.data;
-
             localStorage.setItem('authToken', access_token);
             setToken(access_token);
-
             message.success('¡Bienvenido!');
-            navigate('/products'); // Navega a la ruta de productos
-
+            navigate('/products');
         } catch (error: any) {
             console.error("Error en el login:", error);
             message.error(error.response?.data?.message || 'Email o contraseña incorrectos');
@@ -54,20 +48,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    // --- CORRECCIÓN EN ESTA FUNCIÓN ---
+    const register = async (values: any) => {
+        setIsLoading(true);
+        try {
+            // Usamos el DTO de tu API (name, email, password)
+            await axios.post(`${AUTH_URL}/api/v1/auth/register`, {
+                name: values.name,
+                email: values.email,
+                password: values.password
+            });
+
+            message.success('¡Registro exitoso! Ahora puedes iniciar sesión.');
+            navigate('/'); // Navega a la ruta de login (home)
+
+        } catch (error: any) {
+            console.error("Error en el registro:", error);
+            const errorMsg = error.response?.data?.message || 'Error al registrar la cuenta';
+
+            // Si el mensaje es un array (como en class-validator), únelo.
+            if (Array.isArray(errorMsg)) {
+                message.error(errorMsg.join(', '));
+            } else {
+                message.error(errorMsg);
+            }
+            // 1. El 'throw' debe ir DENTRO del catch
+            throw new Error('Registro fallido');
+
+        } finally {
+            setIsLoading(false);
+        }
+    }; // 2. Se eliminó el '};' extra que estaba aquí
+    // --- FIN DE LA CORRECCIÓN ---
+
     const logout = () => {
         setToken(null);
         localStorage.removeItem('authToken');
-        navigate('/'); // Redirige al login (ruta 'home')
+        navigate('/');
     };
 
     return (
-        <AuthContext.Provider value={{ token, login, logout, isLoading }}>
+        <AuthContext.Provider value={{ token, login, logout, isLoading, register }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-// Hook personalizado para usar el contexto
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {

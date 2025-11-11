@@ -1,6 +1,7 @@
 import { LockOutlined, MailOutlined } from '@ant-design/icons'; // <-- Cambiado
 import { Button, Checkbox, Form, Input, Card, Typography } from 'antd';
-import { useAuth } from '~/contexts/AuthContext'; // <-- Importa el hook de Auth
+import { Link } from "react-router";
+import { useAuth } from '~/contexts/AuthContext';
 
 const { Title } = Typography;
 
@@ -66,6 +67,9 @@ export function LoginForm() {
                     >
                         {isLoading ? 'Ingresando...' : 'Ingresar'}
                     </Button>
+                    <div>
+                        ¿No tienes cuenta? <Link to="/register">¡Regístrate ahora!</Link>
+                    </div>
                 </Form.Item>
             </Form>
         </Card>
